@@ -122,7 +122,7 @@
 //;                            Val=>3, Min=>1, Step=>1, 
 //;                            Doc=>"How many pipe stages are in this block");
 //; # local variables
-//; my $shortSF = $sig_fig-3;
+//; my $shortSF = $sig_fig - 4;
 
 
 module `mname()`
@@ -375,21 +375,18 @@ module `mname()`
    //Select Between Screen Bounds and Rounded Bounds
 
 
-
- logic isBack; //Logic signal, evaluates if the upoly is backfacing
-  logic signed [2*`$shortSF`-1:0] 	 n;
- 
+  logic isBack; //Logic signal, evaluates if the upoly is backfacing
+  logic signed [2*`$shortSF`-1:0] n;
   
   always_comb begin
-  n = ($signed(poly_R10S[1][0][`$shortSF`-1:0]) - $signed(poly_R10S[0][0][`$shortSF`-1:0]))*($signed(poly_R10S[2][1][`$shortSF`-1:0])-$signed(poly_R10S[1][1][`$shortSF`-1:0]))-$signed((poly_R10S[2][0][`$shortSF`-1:0])-$signed(poly_R10S[1][0][`$shortSF`-1:0]))*($signed(poly_R10S[1][1][`$shortSF`-1:0])-$signed(poly_R10S[0][1][`$shortSF`-1:0]));
- 
-   
-  
-    end  
-	assign isBack = n<0?1'b1:1'b0;
-   assign  outvalid_R10H = ~( | invalidate_R10H ) & validPoly_R10H & (isBack); 
+    n = ((poly_R10S[1][0][`$shortSF`-1:0]) - (poly_R10S[0][0][`$shortSF`-1:0]))
+      * ((poly_R10S[2][1][`$shortSF`-1:0]) - (poly_R10S[1][1][`$shortSF`-1:0]))
+      - ((poly_R10S[2][0][`$shortSF`-1:0]) - (poly_R10S[1][0][`$shortSF`-1:0]))
+      * ((poly_R10S[1][1][`$shortSF`-1:0]) - (poly_R10S[0][1][`$shortSF`-1:0]));
+  end
 
-   
+	assign isBack = (n < 0) ? 1'b1 : 1'b0;
+  assign outvalid_R10H = ~( | invalidate_R10H ) & validPoly_R10H & (isBack); 
    
 
    //Flop Clamped Box to R13_retime with retiming registers
