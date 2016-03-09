@@ -74,7 +74,7 @@
 //; 
 //; # local variables
 //; my $edges = ($verts == 3) ? 3 : 5 ;
-//; my $shortSF = $sig_fig;
+//; my $shortSF = $sig_fig - 11;
 //; my $MRound = 2 * $shortSF - $radix;
 
 
@@ -155,8 +155,10 @@ module  `mname()`
    
    //; for( my $i = 0 ; $i < $edges ; $i++) {
    always_comb begin
-      dist_lg_R16S[`$i`] =     edge_R16S[`$i`][0][0] * edge_R16S[`$i`][1][1]
-     -  edge_R16S[`$i`][0][1] * edge_R16S[`$i`][1][0];
+      dist_lg_R16S[`$i`] = $signed(edge_R16S[`$i`][0][0][`$shortSF`-1:0]) 
+                         * $signed(edge_R16S[`$i`][1][1][`$shortSF`-1:0])
+                         - $signed(edge_R16S[`$i`][0][1][`$shortSF`-1:0])
+                         * $signed(edge_R16S[`$i`][1][0][`$shortSF`-1:0]);
    end	    
    //; }
 
